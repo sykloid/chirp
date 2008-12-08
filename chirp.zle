@@ -1,0 +1,10 @@
+quoted-accept-line () {
+	zle .accept-line
+	cmd=(${=BUFFER}) 
+	cmd=$cmd[1] 
+	if [[ $cmd =~ "chirp" ]]
+	then
+		message=${BUFFER##*-- } 
+		BUFFER="${BUFFER%%$message}${(q)message}" 
+	fi
+}
