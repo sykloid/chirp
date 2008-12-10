@@ -1,4 +1,4 @@
-quoted-accept-line () {
+accept-line () {
 	zle .accept-line
 	cmd=(${=BUFFER}) 
 	cmd=$cmd[1] 
@@ -8,3 +8,5 @@ quoted-accept-line () {
 		BUFFER="${BUFFER%%$message}${(q)message}" 
 	fi
 }
+
+zle -N accept-line

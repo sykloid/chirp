@@ -34,19 +34,21 @@ def initAPI() :
 
 def main() :
     options, args = parseOptions(argv)
-    print args
 
     api = initAPI()
 
     if options.action == 'update' :
-        status = []
-        while True :
-            try :
-                status.append(raw_input())
-            except EOFError :
-                break
+        if args :
+            status = args[0]
+        else :
+            status = []
+            while True :
+                try :
+                    status.append(raw_input())
+                except EOFError :
+                    break
 
-        status = '\n'.join(status)
+            status = '\n'.join(status)
 
         if len(status) > 140 :
             print "Message is too long, must be less than 140 characters."
