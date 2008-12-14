@@ -1,12 +1,40 @@
-accept-line () {
-	zle .accept-line
-	cmd=(${=BUFFER}) 
-	cmd=$cmd[1] 
-	if [[ $cmd =~ "chirp" ]]
-	then
-		message=${BUFFER##*-- } 
-		BUFFER="${BUFFER%%$message}${(q)message}" 
-	fi
+# This file holds a set of widgets for the Z Line Editor, part of the Z shell.
+# It allows you to type your message on the command line itself, instead of
+# inside the python program.
+#
+# The advantage with doing this is that the posting a message to twitter is a
+# one line thing :). The disadvantage is that you have to mess with the
+# quoting idiosyncrasies of the shell you use, because what you type on the
+# command line is under the control of the shell, not the program you call.
+#
+# Eventually, I hope to have a solution for all common shells, as well as
+# others I may use. However, it does seem like a lot of work to get such a
+# little in return.
+
+
+# My first zle widget for chirp, escapes everything after the '--'
+
+accept-line-chirp-1 () {
+    zle .accept-line
+    cmd=(${=BUFFER}) 
+    cmd=$cmd[1] 
+    if [[ $cmd =~ "chirp" ]]; then
+        message=${BUFFER##*-- } 
+        BUFFER="${BUFFER%%$message}${(q)message}" 
+    fi
 }
 
-zle -N accept-line
+# My second attempt, this one only quotes single apostrophes ('). This makes
+# it easier to recall in history and edit again. 
+
+accept-line-chirp () {
+    zle .accept-line
+    cmd=(${=BUFFER}) 
+    cmd=$cmd[1] 
+    if [[ $cmd =~ "chirp" ]]; then
+        CURSOR=${(N)BUFFER##*-- }
+        zle set-mark-command
+        zle end-of-line
+        zle quote-region
+    fi
+}

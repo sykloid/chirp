@@ -4,6 +4,7 @@ import twitter
 from ConfigParser import ConfigParser
 from optparse import OptionParser
 from sys import argv
+from os.path import expanduser
 
 def parseOptions(argv) :
     '''Does command line parsing of options.'''
@@ -25,7 +26,7 @@ def parseOptions(argv) :
 
 def initAPI() :
     parser = ConfigParser()
-    parser.read('.chirprc')
+    parser.read('%s/.chirprc' % expanduser('~'))
 
     api = twitter.Api(parser.get('authentication', 'username'),
                       parser.get('authentication', 'password'))
