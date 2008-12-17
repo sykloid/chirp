@@ -69,7 +69,10 @@ def main() :
             api.PostUpdate(status)
             print "Posted update."
     elif options.action == 'list' :
-        print options.list_arg
+        timeline = api.GetUserTimeline(user = options.list_arg)
+        for status in timeline :
+            print "-", status.GetText()
+            print "\t- ", status.GetRelativeCreatedAt()
 
     elif options.action == 'test' :
         print args
