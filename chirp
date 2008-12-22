@@ -5,6 +5,7 @@ from ConfigParser import ConfigParser
 from optparse import OptionParser
 from sys import argv
 from os.path import expanduser
+from termcolor import colored
 
 def parseOptions(argv) :
     '''Does command line parsing of options.'''
@@ -20,7 +21,22 @@ def parseOptions(argv) :
                       const  = 'test',
                       dest   = 'action')
 
+    parser.add_option('-l', '--list',
+                      action = 'store',
+                      dest   = 'list_arg')
+
+    parser.add_option('-r', '--replies',
+                      action = 'store_const',
+                      const  = 'replies',
+                      dest   = 'action')
+
     options, args = parser.parse_args(argv[1:])
+
+    try :
+        if options.list_arg :
+            options.action = 'list'
+    except NameError :
+        pass
 
     return options, args
 
@@ -57,6 +73,18 @@ def main() :
         else :
             api.PostUpdate(status)
             print "Posted update."
+
+    elif options.action == 'list' :
+        timeline = api.GetUserTimeline(user = options.list_arg)
+        for status in timeline :
+            print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
+            print "\t- ", status.GetRelativeCreatedAt()
+
+    elif options.action == 'replies':
+        replies = api.GetReplies()
+        for status in replies:
+            print status.user.screen_name, "-", status.GetText()
+            print "\t- ", status.GetRelativeCreatedAt()
 
     elif options.action == 'test' :
         print args
