@@ -20,7 +20,18 @@ def parseOptions(argv) :
                       const  = 'test',
                       dest   = 'action')
 
+    parser.add_option('-l', '--list',
+                      action = 'store',
+                      dest   = 'list_arg')
+
+
     options, args = parser.parse_args(argv[1:])
+
+    try :
+        if options.list_arg :
+            options.action = 'list'
+    except NameError :
+        pass
 
     return options, args
 
@@ -57,6 +68,11 @@ def main() :
         else :
             api.PostUpdate(status)
             print "Posted update."
+    elif options.action == 'list' :
+        timeline = api.GetUserTimeline(user = options.list_arg)
+        for status in timeline :
+            print "-", status.GetText()
+            print "\t- ", status.GetRelativeCreatedAt()
 
     elif options.action == 'test' :
         print args
