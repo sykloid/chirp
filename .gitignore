@@ -1,2 +1,3 @@
 .chirprc
 *.swp
+*.pyc
