@@ -1,0 +1,12 @@
+Things you should know.
+=======================
+
+* This project makes use of the python-twitter-api to connect to twitter. It can
+  be obtained at http://code.google.com/p/python-twitter/
+
+* Your configuration file should go in your home directory, under the name
+  `.chirprc`, and should have the same format as the sample file given.
+  It also advised that you give it user read-only permissions (400) as it is
+  going to contain your password in plaintext.
+
+
