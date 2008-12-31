@@ -64,19 +64,41 @@ def parseOptions(argv) :
 
     return options, args
 
-def initAPI() :
+def parseConfig() :
+    # Defaults
+    settings = {
+        'color' : False,
+    }
+
     parser = ConfigParser()
-    parser.read('%s/.chirprc' % expanduser('~'))
+    parser.read(expanduser('~/.chirprc'))
 
-    api = twitter.Api(parser.get('authentication', 'username'),
-                      parser.get('authentication', 'password'))
+    settings.update(dict((option, parser.get(section, option))
+                    for section in parser.sections()
+                    for option in parser.options(section)))
 
-    return api
+    return settings
+
+def init_settings() :
+    '''Returns : settings & args.
+        settings - A dictionary with all config options. Options specifed on the
+        command line override those set in the config file.
+
+        args - Everything left on the command line after removing options and
+        the main action.
+    '''
+
+    options, args = parseOptions(argv)
+    settings = parseConfig()
+    settings.update(filter(lambda (option, value) : value != None,
+                           options.__dict__.items()))
+
+    return settings, args
 
 def main() :
-    options, args = parseOptions(argv)
+    settings, args = init_settings()
 
-    api = initAPI()
+    api = twitter.Api(settings['username'], settings['password'])
 
     if options.action == 'update' :
         if args :
