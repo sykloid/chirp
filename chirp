@@ -24,32 +24,43 @@ def parseOptions(argv) :
     '''Does command line parsing of options.'''
     parser = OptionParser()
 
-    parser.add_option('-u', '--update',
-                      action = 'store_const',
-                      const  = 'update',
-                      dest   = 'action')
-
-    parser.add_option('-t', '--test',
-                      action = 'store_const',
-                      const  = 'test',
-                      dest   = 'action')
-
-    parser.add_option('-l', '--list',
+    parser.add_option('-u', '--username',
                       action = 'store',
-                      dest   = 'list_arg')
+                      dest   = 'username')
 
-    parser.add_option('-r', '--replies',
-                      action = 'store_const',
-                      const  = 'replies',
-                      dest   = 'action')
+    parser.add_option('-p', '--password',
+                      action = 'store',
+                      dest   = 'password')
+
+    parser.add_option('-c', '--color',
+                      action = 'store_true',
+                      dest   = 'color')
 
     options, args = parser.parse_args(argv[1:])
 
+    # Validation of actions.
+
+    # No Action. Barring options, the action should be the first thing on the
+    # line after 'chirp' or equivalent.
+
     try :
-        if options.list_arg :
-            options.action = 'list'
-    except NameError :
-        pass
+        options.action = args.pop(0)
+    except IndexError :
+        print "Must specify an action."
+        exit(1)
+
+    # Invalid Action
+    if options.action not in ACTIONS :
+        print "Action must be one of : ", ACTIONS
+        exit(1)
+
+    # No target for 'list' and 'direct' actions.
+    if options.action in set(['list', 'direct']) :
+        try :
+            options.target = args.pop(0)
+        except IndexError :
+            print "The 'list' and 'direct' actions require a target."
+            exit(1)
 
     return options, args
 
