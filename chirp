@@ -100,7 +100,7 @@ def main() :
 
     api = twitter.Api(settings['username'], settings['password'])
 
-    if options.action == 'update' :
+    if settings['action'] == 'post' :
         if args :
             status = args[0]
         else :
@@ -118,30 +118,24 @@ def main() :
             print "Current message is %d characters long." % len(status)
         else :
             api.PostUpdate(status)
-            print "Posted update."
-    elif options.action == 'list' :
-        timeline = api.GetUserTimeline(user = options.list_arg)
-        for status in timeline :
-            print "-", status.GetText()
-            print "\t- ", status.GetRelativeCreatedAt()
+            print "Posted update : %s" % status
 
-    elif options.action == 'list' :
-        timeline = api.GetUserTimeline(user = options.list_arg)
+    elif settings['action'] == 'list' :
+        timeline = api.GetUserTimeline(user = settings['target'])
         for status in timeline :
             print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
             print "\t- ", status.GetRelativeCreatedAt()
 
-    elif options.action == 'replies':
+    elif settings['action'] == 'replies':
         replies = api.GetReplies()
         for status in replies:
             print status.user.screen_name, "-", status.GetText()
             print "\t- ", status.GetRelativeCreatedAt()
 
-    elif options.action == 'test' :
-        print args
+    elif settings['action'] == 'debug' :
+        print settings, args
 
     return
 
 if __name__ == '__main__' :
     main()
-
