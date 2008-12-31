@@ -59,6 +59,8 @@ def main() :
             status = args[0]
         else :
             status = []
+            print "Type your status update here (140 chars max)."
+            print "Use EOF character (usually '^D') to stop."
             while True :
                 try :
                     status.append(raw_input())
