@@ -1,11 +1,24 @@
 #! /usr/bin/env python
 
-import twitter
 from ConfigParser import ConfigParser
 from optparse import OptionParser
-from sys import argv
+from sys import argv, exit
 from os.path import expanduser
 from termcolor import colored
+
+try :
+    import twitter
+except ImportError :
+    print "You don't have the python-twitter library needed to use chirp."
+    exit(1)
+
+
+ACTIONS = set([
+    'post',
+    'list',
+    'direct',
+    'debug',
+])
 
 def parseOptions(argv) :
     '''Does command line parsing of options.'''
