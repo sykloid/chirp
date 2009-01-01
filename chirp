@@ -1,60 +1,106 @@
 #! /usr/bin/env python
 
-import twitter
 from ConfigParser import ConfigParser
 from optparse import OptionParser
-from sys import argv
+from sys import argv, exit
 from os.path import expanduser
 from termcolor import colored
+
+try :
+    import twitter
+except ImportError :
+    print "You don't have the python-twitter library needed to use chirp."
+    exit(1)
+
+
+ACTIONS = set([
+    'post',
+    'list',
+    'direct',
+    'debug',
+])
 
 def parseOptions(argv) :
     '''Does command line parsing of options.'''
     parser = OptionParser()
 
-    parser.add_option('-u', '--update',
-                      action = 'store_const',
-                      const  = 'update',
-                      dest   = 'action')
-
-    parser.add_option('-t', '--test',
-                      action = 'store_const',
-                      const  = 'test',
-                      dest   = 'action')
-
-    parser.add_option('-l', '--list',
+    parser.add_option('-u', '--username',
                       action = 'store',
-                      dest   = 'list_arg')
+                      dest   = 'username')
 
-    parser.add_option('-r', '--replies',
-                      action = 'store_const',
-                      const  = 'replies',
-                      dest   = 'action')
+    parser.add_option('-p', '--password',
+                      action = 'store',
+                      dest   = 'password')
+
+    parser.add_option('-c', '--color',
+                      action = 'store_true',
+                      dest   = 'color')
 
     options, args = parser.parse_args(argv[1:])
 
+    # Validation of actions.
+
+    # No Action. Barring options, the action should be the first thing on the
+    # line after 'chirp' or equivalent.
+
     try :
-        if options.list_arg :
-            options.action = 'list'
-    except NameError :
-        pass
+        options.action = args.pop(0)
+    except IndexError :
+        print "Must specify an action."
+        exit(1)
+
+    # Invalid Action
+    if options.action not in ACTIONS :
+        print "Action must be one of : ", ACTIONS
+        exit(1)
+
+    # No target for 'list' and 'direct' actions.
+    if options.action in set(['list', 'direct']) :
+        try :
+            options.target = args.pop(0)
+        except IndexError :
+            print "The 'list' and 'direct' actions require a target."
+            exit(1)
 
     return options, args
 
-def initAPI() :
+def parseConfig() :
+    # Defaults
+    settings = {
+        'color' : False,
+    }
+
     parser = ConfigParser()
-    parser.read('%s/.chirprc' % expanduser('~'))
+    parser.read(expanduser('~/.chirprc'))
 
-    api = twitter.Api(parser.get('authentication', 'username'),
-                      parser.get('authentication', 'password'))
+    settings.update(dict((option, parser.get(section, option))
+                    for section in parser.sections()
+                    for option in parser.options(section)))
 
-    return api
+    return settings
+
+def init_settings() :
+    '''Returns : settings & args.
+        settings - A dictionary with all config options. Options specifed on the
+        command line override those set in the config file.
+
+        args - Everything left on the command line after removing options and
+        the main action.
+    '''
+
+    options, args = parseOptions(argv)
+    settings = parseConfig()
+    settings.update(filter(lambda (option, value) : value != None,
+                           options.__dict__.items()))
+
+    return settings, args
 
 def main() :
-    options, args = parseOptions(argv)
+    settings, args = init_settings()
 
-    api = initAPI()
+    api = twitter.Api(settings['username'], settings['password'])
 
-    if options.action == 'update' :
+    if settings['action'] == 'post' :
         if args :
             status = args[0]
         else :
@@ -74,30 +120,24 @@ def main() :
             print "Current message is %d characters long." % len(status)
         else :
             api.PostUpdate(status)
-            print "Posted update."
-    elif options.action == 'list' :
-        timeline = api.GetUserTimeline(user = options.list_arg)
-        for status in timeline :
-            print "-", status.GetText()
-            print "\t- ", status.GetRelativeCreatedAt()
+            print "Posted update : %s" % status
 
-    elif options.action == 'list' :
-        timeline = api.GetUserTimeline(user = options.list_arg)
+    elif settings['action'] == 'list' :
+        timeline = api.GetUserTimeline(user = settings['target'])
         for status in timeline :
             print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
             print "\t- ", status.GetRelativeCreatedAt()
 
-    elif options.action == 'replies':
+    elif settings['action'] == 'replies':
         replies = api.GetReplies()
         for status in replies:
             print status.user.screen_name, "-", status.GetText()
             print "\t- ", status.GetRelativeCreatedAt()
 
-    elif options.action == 'test' :
-        print args
+    elif settings['action'] == 'debug' :
+        print settings, args
 
     return
 
 if __name__ == '__main__' :
     main()
-

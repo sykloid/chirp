@@ -19,7 +19,7 @@ accept-line-chirp-1 () {
     cmd=(${=BUFFER}) 
     cmd=$cmd[1] 
     if [[ $cmd =~ "chirp" ]]; then
-        message=${BUFFER##*-- } 
+        message=${BUFFER##* -- } 
         BUFFER="${BUFFER%%$message}${(q)message}" 
     fi
 }
@@ -32,7 +32,7 @@ accept-line-chirp () {
     cmd=(${=BUFFER}) 
     cmd=$cmd[1] 
     if [[ $cmd =~ "chirp" ]]; then
-        CURSOR=${(N)BUFFER##*-- }
+        CURSOR=${(N)BUFFER##* -- }
         zle set-mark-command
         zle end-of-line
         zle quote-region

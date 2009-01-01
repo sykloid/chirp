@@ -9,4 +9,14 @@ Things you should know.
   It also advised that you give it user read-only permissions (400) as it is
   going to contain your password in plaintext.
 
+* On typing your posts on the command line :
 
+  * Right now, no extra processing is done on the message typed after the --.
+  * In fact, this has less to do with the program and more to do with the shell
+    you use, since it hasn't been passed to the program yet.
+  * One way to make sure everything goes alright is to quote your message with
+    single quotes ('), and escape any of those inside.
+  * A sample widget for the zle (zsh) has been included, since that's the shell
+    it was tested on.
+  * For now, the only other option is to leave the message empty, and type it in
+    inside chirp's input loop.
