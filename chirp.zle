@@ -1,3 +1,21 @@
+# Zle widgets to make life easier with chirp.
+#
+# Copyright 2008, 2009 P.C. Shyamshankar <sykora@lucentbeing.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 # This file holds a set of widgets for the Z Line Editor, part of the Z shell.
 # It allows you to type your message on the command line itself, instead of
 # inside the python program.
@@ -10,7 +28,6 @@
 # Eventually, I hope to have a solution for all common shells, as well as
 # others I may use. However, it does seem like a lot of work to get such a
 # little in return.
-
 
 # My first zle widget for chirp, escapes everything after the '--'
 
@@ -25,7 +42,7 @@ accept-line-chirp-1 () {
 }
 
 # My second attempt, this one only quotes single apostrophes ('). This makes
-# it easier to recall in history and edit again. 
+# it easier to recall in history and edit again. Right now, I'm using this one.
 
 accept-line-chirp () {
     zle .accept-line
