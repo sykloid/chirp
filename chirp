@@ -36,7 +36,10 @@ ACTIONS = set([
     'list',
     'direct',
     'debug',
+    'timeline',
 ])
+
+DEFAULT_ACTION = 'timeline'
 
 def parseOptions(argv) :
     '''Does command line parsing of options.'''
@@ -64,8 +67,7 @@ def parseOptions(argv) :
     try :
         options.action = args.pop(0)
     except IndexError :
-        print "Must specify an action."
-        exit(1)
+        options.action = DEFAULT_ACTION
 
     # Invalid Action
     if options.action not in ACTIONS :
