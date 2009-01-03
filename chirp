@@ -116,7 +116,11 @@ def init_settings() :
 def main() :
     settings, args = init_settings()
 
-    api = twitter.Api(settings['username'], settings['password'])
+    try :
+        api = twitter.Api(settings['username'], settings['password'])
+    except KeyError:
+        print "You must specify a username and a password."
+        exit(1)
 
     if settings['action'] == 'post' :
         if args :
