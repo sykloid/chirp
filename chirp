@@ -30,7 +30,6 @@ except ImportError :
     print "You don't have the python-twitter library needed to use chirp."
     exit(1)
 
-
 ACTIONS = set([
     'post',
     'list',
@@ -148,6 +147,12 @@ def main() :
 
     elif settings['action'] == 'list' :
         timeline = api.GetUserTimeline(user = settings['target'])
+        for status in timeline :
+            print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
+            print "\t- ", status.GetRelativeCreatedAt()
+
+    elif settings['action'] == 'timeline' :
+        timeline = api.GetFriendsTimeline()
         for status in timeline :
             print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
             print "\t- ", status.GetRelativeCreatedAt()
