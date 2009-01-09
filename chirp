@@ -92,6 +92,7 @@ def parseConfig() :
     # Defaults
     settings = {
         'color' : False,
+        'number': 10,
     }
 
     parser = ConfigParser()
@@ -155,8 +156,9 @@ def main() :
         for status in timeline :
             print colored(status.user.screen_name, 'blue'), "at", status.GetRelativeCreatedAt()
             print colored(status.GetText(), 'yellow')
+
     elif settings['action'] == 'timeline' :
-        timeline = api.GetFriendsTimeline()
+        timeline = api.GetFriendsTimeline()[:int(settings['number'])]
         for status in timeline :
             print colored(status.user.screen_name, 'blue'), colored(status.GetRelativeCreatedAt(), 'yellow')
             print status.GetText()
