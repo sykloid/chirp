@@ -56,6 +56,11 @@ def parseOptions(argv) :
                       action = 'store_true',
                       dest   = 'color')
 
+    parser.add_option('-n', '--number',
+                      type  =  'int',
+                      action = 'store',
+                      dest   = 'number')
+
     options, args = parser.parse_args(argv[1:])
 
     # Validation of actions.
@@ -148,14 +153,13 @@ def main() :
     elif settings['action'] == 'list' :
         timeline = api.GetUserTimeline(user = settings['target'])
         for status in timeline :
-            print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
-            print "\t- ", status.GetRelativeCreatedAt()
-
+            print colored(status.user.screen_name, 'blue'), "at", status.GetRelativeCreatedAt()
+            print colored(status.GetText(), 'yellow')
     elif settings['action'] == 'timeline' :
         timeline = api.GetFriendsTimeline()
         for status in timeline :
-            print colored(status.user.screen_name, 'blue'), "-", colored(status.GetText(), 'yellow')
-            print "\t- ", status.GetRelativeCreatedAt()
+            print colored(status.user.screen_name, 'blue'), colored(status.GetRelativeCreatedAt(), 'yellow')
+            print status.GetText()
 
     elif settings['action'] == 'replies':
         replies = api.GetReplies()
