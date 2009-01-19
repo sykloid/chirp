@@ -120,6 +120,26 @@ def init_settings() :
 
     return settings, args
 
+def get_message(args) :
+    '''Get a message from the user, either on the command line, or from stdin.
+    '''
+
+    if args :
+        status = args[0]
+    else :
+        status = []
+        print "Type your status update here (140 chars max)."
+        print "Use EOF character (usually '^D') to stop."
+        while True :
+            try :
+                status.append(raw_input())
+            except EOFError :
+                break
+
+        status = '\n'.join(status)
+
+    return status
+
 def main() :
     settings, args = init_settings()
 
@@ -130,20 +150,7 @@ def main() :
         exit(1)
 
     if settings['action'] == 'post' :
-        if args :
-            status = args[0]
-        else :
-            status = []
-            print "Type your status update here (140 chars max)."
-            print "Use EOF character (usually '^D') to stop."
-            while True :
-                try :
-                    status.append(raw_input())
-                except EOFError :
-                    break
-
-            status = '\n'.join(status)
-
+        status = get_message(args)
         if len(status) > 140 :
             print "Message is too long, must be less than 140 characters."
             print "Current message is %d characters long." % len(status)
