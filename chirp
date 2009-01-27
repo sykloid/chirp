@@ -36,6 +36,10 @@ ACTIONS = set([
     'direct',
     'debug',
     'timeline',
+    'followers',
+    'following',
+    'follow',
+    'unfollow',
 ])
 
 DEFAULT_ACTION = 'timeline'
@@ -79,11 +83,11 @@ def parseOptions(argv) :
         exit(1)
 
     # No target for 'list' and 'direct' actions.
-    if options.action in set(['list', 'direct']) :
+    if options.action in set(['unfollow', 'follow', 'list', 'direct']) :
         try :
             options.target = args.pop(0)
         except IndexError :
-            print "The 'list' and 'direct' actions require a target."
+            print "The 'follow', 'unfollow', 'list' and 'direct' actions require a target."
             exit(1)
 
     return options, args
@@ -175,6 +179,26 @@ def main() :
         for status in replies:
             print status.user.screen_name, "-", status.GetText()
             print "\t- ", status.GetRelativeCreatedAt()
+
+    elif settings['action'] == 'followers' :
+        followers = api.GetFollowers()
+        print "These users are following you :"
+        for follower in followers :
+            print follower.screen_name
+
+    elif settings['action'] == 'following' :
+        friends = api.GetFriends()
+        print "You are following :"
+        for friend in friends :
+            print friend.screen_name
+
+    elif settings['action'] == 'follow' :
+        api.CreateFriendship(settings['target'])
+        print "You are now following %s." % settings['target']
+
+    elif settings['action'] == 'unfollow' :
+        api.DestroyFriendship(settings['target'])
+        print "You are no longer following %s." % settings['target']
 
     elif settings['action'] == 'debug' :
         print settings, args
