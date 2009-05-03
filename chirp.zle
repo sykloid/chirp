@@ -49,9 +49,11 @@ accept-line-chirp () {
     cmd=(${=BUFFER}) 
     cmd=$cmd[1] 
     if [[ $cmd =~ "chirp" ]]; then
-        CURSOR=${(N)BUFFER##* -- }
-        zle set-mark-command
-        zle end-of-line
-        zle quote-region
+        if [[ $BUFFER =~ " -- " ]]; then
+            CURSOR=${(N)BUFFER#* -- }
+            zle set-mark-command
+            zle end-of-line
+            zle quote-region
+        fi
     fi
 }
